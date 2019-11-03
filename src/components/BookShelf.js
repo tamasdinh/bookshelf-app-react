@@ -9,14 +9,13 @@ class BookShelf extends Component {
         <div className="bookshelf-books">
           <ol className="books-grid">
             {this.props.books.map((book) => (
-              <li>
+              <li key={book.index}>
                 <Book
-                  title={book.title}
-                  authors={[...book.authors].join(', ')}
+                  book={book}
                   style={{
                     width: 128,
-                    height: 193,
-                    backgroundImage: book.image}}
+                    height: 193}}
+                  updateCategory={this.props.updateCategory}
                 />
               </li>
             ))}

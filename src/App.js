@@ -7,7 +7,7 @@ import * as booksAPI from './BooksAPI'
 class BooksApp extends React.Component {
   state = {
     currentlyReading: [],
-    mustRead: [],
+    wantToRead: [],
     read: [],
     showSearchPage: false
   }
@@ -15,11 +15,12 @@ class BooksApp extends React.Component {
   initializeShelves = function (book) {
     const bookItem = {
       title: book.title,
-      authors: book.authors,
+      authors: [...book.authors].join(', '),
       image: book.imageLinks.smallThumbnail,
-      id: book.industryIdentifiers[1].identifier
+      id: book.id,
+      shelf: book.shelf
     }
-    console.log(bookItem, book.shelf)
+
     switch (book.shelf) {
       case "currentlyReading":
         this.setState((currentState) => ({
@@ -28,7 +29,7 @@ class BooksApp extends React.Component {
         break;
       case "wantToRead":
         this.setState((currentState) => ({
-          mustRead: currentState.mustRead.concat([{...bookItem}])
+          wantToRead: currentState.wantToRead.concat([{...bookItem}])
         }));
         break;
       case "read":
@@ -40,13 +41,26 @@ class BooksApp extends React.Component {
         return null;
     }
   }
+
+  updateCategory = (book, newCategory) => {
+    booksAPI.update(book, newCategory)
+    .then(
+      this.setState((currentState) => ({
+        [book.shelf]: currentState[book.shelf].filter((inBook) => inBook.id !== book.id),
+        [newCategory]: currentState[newCategory].concat([book])
+      }))
+    )
+    .catch((error) => {
+      alert('An error occurred while writing to the database. Please try again later.')
+      console.log('Error', error)
+    })
+  }
   
   componentDidMount() {
     booksAPI.getAll()
       .then((books) => {
         books.map((book) => this.initializeShelves(book, this.state))
       })
-      .then(() => console.log(this.state))
   }
 
   render() {
@@ -56,9 +70,9 @@ class BooksApp extends React.Component {
           <h1>MyReads App</h1>
           <Clock/>
         </div>
-        <BookShelf title='Currently reading' books={this.state.currentlyReading}/>
-        <BookShelf title='Must read' books={this.state.mustRead}/>
-        <BookShelf title='Read' books={this.state.read}/>
+        <BookShelf title='Currently reading' books={this.state.currentlyReading} updateCategory={this.updateCategory}/>
+        <BookShelf title='Must read' books={this.state.wantToRead} updateCategory={this.updateCategory}/>
+        <BookShelf title='Read' books={this.state.read} updateCategory={this.updateCategory}/>
         <div className="open-search">
           <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
         </div>
