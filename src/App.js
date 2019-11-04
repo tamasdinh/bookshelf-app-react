@@ -8,13 +8,10 @@ import SearchPage from './components/SearchPage'
 
 class BooksApp extends React.Component {
   state = {
-    currentlyReading: [],
-    wantToRead: [],
-    read: [],
-    none: []
+    books: []
   }
   
-  initializeShelves = function (book) {
+  updateState = function (book) {
     const bookItem = {
       title: book.title,
       authors: [...book.authors].join(', '),
@@ -23,38 +20,17 @@ class BooksApp extends React.Component {
       shelf: book.shelf
     }
 
-    switch (book.shelf) {
-      case "currentlyReading":
-        this.setState((currentState) => ({
-          currentlyReading: currentState.currentlyReading.concat([{...bookItem}])
-        }));
-        break;
-      case "wantToRead":
-        this.setState((currentState) => ({
-          wantToRead: currentState.wantToRead.concat([{...bookItem}])
-        }));
-        break;
-      case "read":
-        this.setState((currentState) => ({
-          read: currentState.read.concat([{...bookItem}])
-        }));
-        break;
-      case "none":
-        this.setState((currentState) => ({
-          read: currentState.none.concat([{...bookItem}])
-        }));
-        break;
-      default:
-        return null;
-    }
+    this.setState((currentState) => ({
+      books: currentState.books.concat([{...bookItem}])
+    }));
   }
 
   updateCategory = (book, newCategory) => {
+    book.shelf = newCategory
     booksAPI.update(book, newCategory)
     .then(
       this.setState((currentState) => ({
-        [book.shelf]: currentState[book.shelf].filter((inBook) => inBook.id !== book.id),
-        [newCategory]: currentState[newCategory].concat([book])
+        books: currentState.books.filter((inBook) => inBook.id !== book.id).concat([book]),
       }))
     )
     .catch((error) => {
@@ -66,7 +42,7 @@ class BooksApp extends React.Component {
   componentDidMount() {
     booksAPI.getAll()
       .then((books) => {
-        books.map((book) => this.initializeShelves(book, this.state))
+        books.map((book) => this.updateState(book, this.state))
       })
   }
 
@@ -79,9 +55,18 @@ class BooksApp extends React.Component {
               <h1>MyReads App</h1>
               <Clock/>
             </div>
-            <BookShelf title='Currently reading' books={this.state.currentlyReading} updateCategory={this.updateCategory}/>
-            <BookShelf title='Must read' books={this.state.wantToRead} updateCategory={this.updateCategory}/>
-            <BookShelf title='Read' books={this.state.read} updateCategory={this.updateCategory}/>
+            <BookShelf
+              title='Currently reading'
+              books={this.state.books.filter((book) => book.shelf === 'currentlyReading')}
+              updateCategory={this.updateCategory}/>
+            <BookShelf
+              title='Must read'
+              books={this.state.books.filter((book) => book.shelf === 'wantToRead')}
+              updateCategory={this.updateCategory}/>
+            <BookShelf
+              title='Read'
+              books={this.state.books.filter((book) => book.shelf === 'read')}
+              updateCategory={this.updateCategory}/>
             <Link
               to='/search'
               className='open-search'>
@@ -90,7 +75,7 @@ class BooksApp extends React.Component {
           </React.Fragment>
         )}/>
         <Route path='/search' render={() => (
-          <SearchPage books={this.state} updateCategory={this.updateCategory}/>
+          <SearchPage books={this.state.books} updateCategory={this.updateCategory}/>
         )}/>
       </div>
     )
