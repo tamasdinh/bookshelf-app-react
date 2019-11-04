@@ -9,37 +9,22 @@ class SearchPage extends Component {
 
   updateQuery = (query) => {
     this.setState(() => ({
-      query: query.trim()
+      query: query
     }))
   }
 
   render() {
 
-    for (let array in Object.values(this.props.books)) {
-      console.log(Object.values(array))
-    }
-    console.log('all arrays:', Object.values(this.props.books))
-    
-    const concatenate = (arrayOfObjects) => {
-      const concatenatedArray = []
-      for (let i = 0; i < arrayOfObjects.length; i++) {
-        console.log('arrayofObjects:', arrayOfObjects[i])
-        concatenatedArray.concat(arrayOfObjects[i])
-      }
-      return concatenatedArray
-    }
-    
     const filterBooks = (array, query) => (
       array.filter((book) => (
-        Object.values(book).toString().toLowerCase().includes(query.toLowerCase())
+        book.title.toString().toLowerCase().includes(query.toLowerCase()) ||
+        book.authors.toString().toLowerCase().includes(query.toLowerCase())
         ))
     )
-    console.log(concatenate(this.props.books))
-    console.log('Filter:', filterBooks(concatenate(this.props.books), this.state.query))
 
     const booksToShow = (this.state.query === '')
     ? []
-    : filterBooks(concatenate(this.props.books), this.state.query)
+    : filterBooks(this.props.books, this.state.query)
 
     return (
       <div>
@@ -88,7 +73,3 @@ class SearchPage extends Component {
 }
 
 export default SearchPage
-
-/*
-
-*/
