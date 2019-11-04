@@ -3,13 +3,15 @@ import './App.css';
 import BookShelf from './components/BookShelf'
 import Clock from './components/Clock'
 import * as booksAPI from './BooksAPI'
+import { Route, Link } from 'react-router-dom'
+import SearchPage from './components/SearchPage'
 
 class BooksApp extends React.Component {
   state = {
     currentlyReading: [],
     wantToRead: [],
     read: [],
-    showSearchPage: false
+    none: []
   }
   
   initializeShelves = function (book) {
@@ -35,6 +37,11 @@ class BooksApp extends React.Component {
       case "read":
         this.setState((currentState) => ({
           read: currentState.read.concat([{...bookItem}])
+        }));
+        break;
+      case "none":
+        this.setState((currentState) => ({
+          read: currentState.none.concat([{...bookItem}])
         }));
         break;
       default:
@@ -66,16 +73,25 @@ class BooksApp extends React.Component {
   render() {
     return (
       <div>
-        <div className="list-books-title">
-          <h1>MyReads App</h1>
-          <Clock/>
-        </div>
-        <BookShelf title='Currently reading' books={this.state.currentlyReading} updateCategory={this.updateCategory}/>
-        <BookShelf title='Must read' books={this.state.wantToRead} updateCategory={this.updateCategory}/>
-        <BookShelf title='Read' books={this.state.read} updateCategory={this.updateCategory}/>
-        <div className="open-search">
-          <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
-        </div>
+        <Route exact path='/' render={() => (
+          <React.Fragment>
+            <div className="list-books-title">
+              <h1>MyReads App</h1>
+              <Clock/>
+            </div>
+            <BookShelf title='Currently reading' books={this.state.currentlyReading} updateCategory={this.updateCategory}/>
+            <BookShelf title='Must read' books={this.state.wantToRead} updateCategory={this.updateCategory}/>
+            <BookShelf title='Read' books={this.state.read} updateCategory={this.updateCategory}/>
+            <Link
+              to='/search'
+              className='open-search'>
+              <button>+</button>
+            </Link>
+          </React.Fragment>
+        )}/>
+        <Route path='/search' render={() => (
+          <SearchPage books={this.state} updateCategory={this.updateCategory}/>
+        )}/>
       </div>
     )
   }
