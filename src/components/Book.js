@@ -2,7 +2,13 @@ import React, { Component } from 'react'
 import BookShelfChanger from './BookShelfChanger'
 
 class Book extends Component {
+
   render() {
+
+    const image = (this.props.book.imageLinks && this.props.book.imageLinks.smallThumbnail)
+      ? this.props.book.imageLinks.smallThumbnail
+      : undefined
+
     return (
       <div className="book">
         <div className="book-top">
@@ -10,7 +16,7 @@ class Book extends Component {
             style={{
               width: this.props.style.width,
               height:this.props.style.height,
-              backgroundImage: `url(${this.props.book.imageLinks.smallThumbnail})`}}>
+              backgroundImage: `url(${image})`}}>
           </div>
           <BookShelfChanger
             book={this.props.book}

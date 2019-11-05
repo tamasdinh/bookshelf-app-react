@@ -52,9 +52,9 @@ class SearchPage extends Component {
             </div>
           </div>
           <div className="search-books-results">
-            <ol className="books-grid"></ol>
+            <ol className="books-grid">
               {this.state.searchResults.length > 0 && (
-                <div>
+                <React.Fragment>
                   {this.state.searchResults.map((book) => (
                     <li key={book.id}>
                       <Book
@@ -66,7 +66,8 @@ class SearchPage extends Component {
                       />
                     </li>
                   ))}
-                </div>)}
+                </React.Fragment>)}
+            </ol>
           </div>
         </div>
       </div>
@@ -75,7 +76,3 @@ class SearchPage extends Component {
 }
 
 export default SearchPage
-
-/*
-
-*/
