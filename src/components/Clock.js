@@ -15,6 +15,10 @@ class Clock extends Component {
     }, 1000);
   }
 
+  componentWillUnmount() {
+    clearInterval(this.intervalID);
+  }
+
   tick() {
     this.setState({
       time: new Date().toLocaleTimeString()
