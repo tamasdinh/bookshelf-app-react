@@ -70,6 +70,7 @@ class BooksApp extends React.Component {
           <SearchPage
             books={this.state.books}
             updateCategory={this.updateCategory}
+            updateState={this.updateState}
           />
         )}/>
       </div>

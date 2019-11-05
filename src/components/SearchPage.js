@@ -58,11 +58,13 @@ class SearchPage extends Component {
                   {this.state.searchResults.map((book) => (
                     <li key={book.id}>
                       <Book
+                        books={this.props.books}
                         book={book}
                         style={{
                           width: 128,
                           height: 193}}
                         updateCategory={this.props.updateCategory}
+                        updateState={this.updateState}
                       />
                     </li>
                   ))}
