@@ -1,30 +1,29 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import Book from './Book'
+import * as booksAPI from '../BooksAPI'
 
 class SearchPage extends Component {
+
   state = {
-    query: ''
+    query: '',
+    searchResults: []
   }
 
   updateQuery = (query) => {
-    this.setState(() => ({
-      query: query
-    }))
+    this.setState({query})
+    if (query) {
+      booksAPI.search(query).then((results) => {
+      (results.length > 0)
+        ? this.setState({ searchResults: results }, () => { if (this.state.query === '') this.setState({searchResults: []})})
+        : this.setState({searchResults: []})
+      })
+    } else {
+      this.setState({searchResults: []})
+    }
   }
 
   render() {
-
-    const filterBooks = (array, query) => (
-      array.filter((book) => (
-        book.title.toString().toLowerCase().includes(query.toLowerCase()) ||
-        book.authors.toString().toLowerCase().includes(query.toLowerCase())
-        ))
-    )
-
-    const booksToShow = (this.state.query === '')
-    ? []
-    : filterBooks(this.props.books, this.state.query)
 
     return (
       <div>
@@ -54,17 +53,20 @@ class SearchPage extends Component {
           </div>
           <div className="search-books-results">
             <ol className="books-grid"></ol>
-              {booksToShow.map((book) => (
-                <li key={book.id}>
-                  <Book
-                    book={book}
-                    style={{
-                      width: 128,
-                      height: 193}}
-                    updateCategory={this.props.updateCategory}
-                  />
-                </li>
-              ))}
+              {this.state.searchResults.length > 0 && (
+                <div>
+                  {this.state.searchResults.map((book) => (
+                    <li key={book.id}>
+                      <Book
+                        book={book}
+                        style={{
+                          width: 128,
+                          height: 193}}
+                        updateCategory={this.props.updateCategory}
+                      />
+                    </li>
+                  ))}
+                </div>)}
           </div>
         </div>
       </div>
@@ -73,3 +75,7 @@ class SearchPage extends Component {
 }
 
 export default SearchPage
+
+/*
+
+*/

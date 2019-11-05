@@ -12,16 +12,8 @@ class BooksApp extends React.Component {
   }
   
   updateState = function (book) {
-    const bookItem = {
-      title: book.title,
-      authors: [...book.authors].join(', '),
-      image: book.imageLinks.smallThumbnail,
-      id: book.id,
-      shelf: book.shelf
-    }
-
     this.setState((currentState) => ({
-      books: currentState.books.concat([{...bookItem}])
+      books: currentState.books.concat([book])
     }));
   }
 
@@ -75,7 +67,10 @@ class BooksApp extends React.Component {
           </React.Fragment>
         )}/>
         <Route path='/search' render={() => (
-          <SearchPage books={this.state.books} updateCategory={this.updateCategory}/>
+          <SearchPage
+            books={this.state.books}
+            updateCategory={this.updateCategory}
+          />
         )}/>
       </div>
     )

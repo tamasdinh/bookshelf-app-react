@@ -10,7 +10,7 @@ class Book extends Component {
             style={{
               width: this.props.style.width,
               height:this.props.style.height,
-              backgroundImage: `url(${this.props.book.image})`}}>
+              backgroundImage: `url(${this.props.book.imageLinks.smallThumbnail})`}}>
           </div>
           <BookShelfChanger
             book={this.props.book}
@@ -18,7 +18,7 @@ class Book extends Component {
             updateCategory={this.props.updateCategory}/>
         </div>
         <div className="book-title">{this.props.book.title}</div>
-        <div className="book-authors">{this.props.book.authors}</div>
+        <div className="book-authors">{(this.props.book.authors) ? [...this.props.book.authors].join(', ') : ''}</div>
       </div>     
     )
   }
